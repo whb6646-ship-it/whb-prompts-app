@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { PromptHistoryItem, PromptOptions, User } from '../types';
 import ImageUploader from './ImageUploader';
-import { generateImagePrompt, refinePromptWithAI } from '../services/geminiService';
+import { generateImagePrompt } from '../services/geminiService';
 
 const DAILY_LIMIT = 30;
 const AD_INTERVAL = 5;
@@ -205,7 +205,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     if (!generatedPrompt || !instruction.trim()) return;
     setIsRefining(true);
     try {
-      const refined = await refinePromptWithAI(generatedPrompt, instruction);
+    
       setGeneratedPrompt(refined);
       setInstruction('');
       showToast("DNA Re-Sequenced");

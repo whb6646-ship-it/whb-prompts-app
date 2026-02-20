@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">whb-prompts</string>
+    <string name="title_activity_main">whb-prompts</string>
+    <string name="package_name">com.whb.prompts</string>
+    <string name="custom_url_scheme">com.whb.prompts</string>
+</resources>

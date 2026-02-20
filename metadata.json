@@ -1,0 +1,7 @@
+{
+  "name": "WHB Prompts",
+  "description": "A futuristic AI Image-to-Prompt generator for universal character creation in tools like Midjourney and Stable Diffusion.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

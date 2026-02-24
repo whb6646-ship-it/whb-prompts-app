@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { PromptHistoryItem, PromptOptions, User } from '../types';
 import ImageUploader from './ImageUploader';
-import { generateImagePrompt } from "@/types";
+import { generateImagePrompt } from '../services/geminiService';
 
 const DAILY_LIMIT = 30;
 const AD_INTERVAL = 5;

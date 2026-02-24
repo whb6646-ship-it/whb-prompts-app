@@ -10,17 +10,22 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected, currentI
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        onImageSelected(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-    // Reset input so the same file can be selected again if removed
-    e.target.value = '';
-  };
+  const file = e.target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result as string;
+
+      // ✅ REMOVE data:image/...;base64,
+      const base64 = result.split(",")[1];
+
+      onImageSelected(base64);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  e.target.value = '';
+};
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();

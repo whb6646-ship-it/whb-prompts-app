@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { PromptHistoryItem, PromptOptions, User } from '../types';
 import ImageUploader from './ImageUploader';
-import { generateImagePrompt } from '../services/geminiService';
+import { generateImagePrompt } from "@/types";
 
 const DAILY_LIMIT = 30;
 const AD_INTERVAL = 5;
@@ -202,24 +202,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   };
 
   const handleRefinement = async () => {
-    if (!generatedPrompt || !instruction.trim()) return;
-    setIsRefining(true);
-    try {
-    
-      setGeneratedPrompt(refined);
-      setInstruction('');
-      showToast("DNA Re-Sequenced");
-      
-      setHistory(prev => prev.map((item, idx) => 
-        idx === 0 ? { ...item, prompt: refined } : item
-      ));
-    } catch (err) {
-      setError("Assistant connection failed.");
-    } finally {
-      setIsRefining(false);
-      setIsAssistantOpen(false);
-    }
-  };
+  setIsAssistantOpen(false);
+  showToast("Refiner coming soon");
+};
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);

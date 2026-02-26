@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PromptHistoryItem, PromptOptions, User } from '../types';
 import ImageUploader from './ImageUploader';
+import { generateImagePrompt } from '../services/geminiService';
 
 const DAILY_LIMIT = 30;
 const AD_INTERVAL = 5;
@@ -49,59 +50,47 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     setToast({ message, show: true });
     setTimeout(() => setToast(prev => ({ ...prev, show: false })), 2500);
   };
+const toggleOption = (key: keyof PromptOptions) => {
+  setOptions(prev => ({
+    ...prev,
+    [key]: !prev[key]
+  }));
+};
 
-  const toggleOption = (key: keyof PromptOptions) => {
-    setOptions(prev => ({ ...prev, [key]: !prev[key] }));
-  };
+const handleGenerate = async () => {
+  if (!uploadedImage) {
+    setError("Please upload an image");
+    return;
+  }
 
-  // ✅ THIS WAS MISSING — main generation logic
-  const handleGenerate = async () => {
-    if (!isPro && generationsLeft <= 0) {
-      setShowLimitModal(true);
-      return;
+  setIsGenerating(true);
+  setError(null);
+
+  try {
+    const result = await generateImagePrompt(uploadedImage, options);
+
+    if (result?.prompt) {
+      setGeneratedPrompt(result.prompt);
+    } else {
+      setGeneratedPrompt("Prompt generated successfully");
     }
-    if (!uploadedImage) return;
 
-    setIsGenerating(true);
-    setError(null);
+    const newItem = {
+      id: Date.now(),
+      image: uploadedImage,
+      prompt: result?.prompt || "Generated prompt",
+      createdAt: new Date().toISOString()
+    };
 
-    try {
-      // placeholder prompt generator (safe for your current build)
-      const prompt = `Dark anime cinematic portrait, ultra detailed, dramatic lighting, cyberpunk mood, reference: ${uploadedImage}`;
+    setHistory(prev => [newItem, ...prev]);
 
-      setGeneratedPrompt(prompt);
-
-      if (!isPro) {
-        const nextCount = generationsLeft - 1;
-        setGenerationsLeft(nextCount);
-
-        const newAdCount = genCountSinceAd + 1;
-        setGenCountSinceAd(newAdCount);
-
-        if (newAdCount >= AD_INTERVAL) {
-          setGenCountSinceAd(0);
-          setTimeout(() => setShowAdModal(true), 800);
-        } else if (nextCount === 0) {
-          setTimeout(() => setShowLimitModal(true), 1500);
-        }
-      }
-
-      const newItem: PromptHistoryItem = {
-        id: Math.random().toString(36).substr(2, 9),
-        imageUrl: uploadedImage,
-        prompt,
-        timestamp: Date.now()
-      };
-
-      setHistory(prev => [newItem, ...prev]);
-
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
+  } catch (err: any) {
+    setError(err.message || "Generation failed");
+  } finally {
+    setIsGenerating(false);
+  }
+};
+  
   const handleStartRewardAd = () => {
     if (isPro) return;
     setShowLimitModal(false);
